@@ -1,0 +1,29 @@
+version: '3'
+services:
+  php:
+    build:
+      context: ./.
+      dockerfile: Dockerfile
+    container_name: php
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8.0.38
+    container_name: database
+    environment:
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_CHARSET: utf8
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/log:/var/log/mysql
+volumes:
+  mysql_data:
