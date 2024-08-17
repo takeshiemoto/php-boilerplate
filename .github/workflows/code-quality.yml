@@ -9,8 +9,12 @@ on:
 jobs:
   phpstan:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3.7
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -22,13 +26,21 @@ jobs:
 
   php-cs-fixer:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3.7
+
+      - name:
+          Cache Vendor id: cache-vendor
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
 
       - name: PHP CS Fixer
         run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff
